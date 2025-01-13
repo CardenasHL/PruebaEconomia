@@ -16,6 +16,7 @@ document.addEventListener('DOMContentLoaded', function () {
         unityReadyCallbacks = [];
     };
 
+    // Funciones de control de pantalla completa para juegos nuevos
     window.toggleFullScreen = function() {
         let elem = document.getElementById('webgl-content');
         if (!document.fullscreenElement) {
@@ -30,13 +31,14 @@ document.addEventListener('DOMContentLoaded', function () {
             }, 50);
         }
     };
+
     function sendFullscreenStateToUnity(isFullscreen) {
         var fullscreenStateInt = isFullscreen ? 1 : 0;
         if (typeof unityInstance !== 'undefined') {
             unityInstance.SendMessage('FullScreenToggle', 'UpdateIconBasedOnState', fullscreenStateInt);
         }
     }
-    
+
     function requestFullscreen(element) {
         if (element.requestFullscreen) {
             element.requestFullscreen();
@@ -63,11 +65,31 @@ document.addEventListener('DOMContentLoaded', function () {
         console.log("Pantalla completa desactivada");
     }
 
-    window.is_full_screen = function() {
-        return !!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement);
+    // Mantener las funciones de pantalla completa para juegos antiguos
+    window.full_screen = function() {
+        let player = document.getElementById('webgl-content');
+        if (!document.fullscreenElement) {
+            if (player.requestFullscreen) {
+                player.requestFullscreen();
+            } else if (player.mozRequestFullScreen) {
+                player.mozRequestFullScreen(); // Firefox
+            } else if (player.webkitRequestFullscreen) {
+                player.webkitRequestFullscreen(); // Chrome y Safari
+            } else if (player.msRequestFullscreen) {
+                player.msRequestFullscreen(); // IE/Edge
+            }
+        } else {
+            if (document.exitFullscreen) {
+                document.exitFullscreen();
+            } else if (document.mozCancelFullScreen) {
+                document.mozCancelFullScreen(); // Firefox
+            } else if (document.webkitExitFullscreen) {
+                document.webkitExitFullscreen(); // Chrome y Safari
+            } else if (document.msExitFullscreen) {
+                document.msExitFullscreen(); // IE/Edge
+            }
+        }
     };
-
-
 
     // Funciones de control de volumen
     function setVolumeBackground(volume) {
@@ -85,13 +107,13 @@ document.addEventListener('DOMContentLoaded', function () {
             console.error("La instancia de Unity no está disponible.");
         }
     }
-
-    // Inicializa los volúmenes si Unity está listo
-    if (sceneLoaded) {
+     // Inicializa los volúmenes si Unity está listo
+     if (sceneLoaded) {
         setVolumeBackground(volumeBackground);
         setVolumeSFX(volumeSFX);
     } else {
         unityReadyCallbacks.push(() => setVolumeBackground(volumeBackground));
         unityReadyCallbacks.push(() => setVolumeSFX(volumeSFX));
     }
+
 });
