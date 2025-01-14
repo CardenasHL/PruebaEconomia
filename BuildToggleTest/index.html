@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-<html>
 <head>
     <meta charset="utf-8">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -14,29 +13,6 @@
         </div>
     </div>
     <script>
-        function isIOS() {
-            var userAgent = window.navigator.userAgent.toLowerCase();
-            return /iphone|ipod|ipad/.test(userAgent);
-        }
-
-        function adjustFullScreenForIOS() {
-            if (isIOS()) {
-                var docElement = document.documentElement;
-                docElement.style.width = '100%';
-                docElement.style.height = '100%';
-                docElement.style.overflow = 'hidden';
-
-                var unityContainer = document.getElementById('unityContainer');
-                unityContainer.style.width = '100%';
-                unityContainer.style.height = '100%';
-                unityContainer.style.position = 'absolute';
-                unityContainer.style.top = '0';
-                unityContainer.style.left = '0';
-
-                window.scrollTo(0, 1);
-            }
-        }
-
         // Declarar una variable global para almacenar la instancia de Unity
         var unityInstance;
 
@@ -58,17 +34,11 @@
             createUnityInstance(canvas, config, (progress) => {}).then((instance) => {
                 unityInstance = instance;
                 console.log("Unity loaded successfully.");
-                adjustFullScreenForIOS();  // Adjust immediately after Unity is loaded
             }).catch((message) => {
                 alert(`Failed to load Unity: ${message}`);
             });
         };
         document.body.appendChild(script);
-
-        document.addEventListener('DOMContentLoaded', function() {
-            adjustFullScreenForIOS(); // Adjust on initial load
-            window.addEventListener("orientationchange", adjustFullScreenForIOS, false);  // Adjust on orientation change
-        });
     </script>
 </body>
 </html>

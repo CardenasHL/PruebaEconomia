@@ -4,6 +4,24 @@ document.addEventListener('DOMContentLoaded', function () {
     var unityReadyCallbacks = [];
     var volumeBackground = '-24';
     var volumeSFX = '-12';
+    var visibleOnIOS = false;  // Asumimos que por defecto no quieres que sea visible en iOS
+
+    // Función para detectar si el dispositivo es iOS
+    function isIOS() {
+        var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+        return /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+    }
+
+    // Ocultar el botón de pantalla completa en iOS según la configuración de visibleOnIOS
+    if (isIOS()) {
+        if (!visibleOnIOS) {  // Solo desactiva el botón si visibleOnIOS es false
+            if (unityInstance && unityInstance.SendMessage) {
+                unityInstance.SendMessage('FullScreenToggle', 'DisableToggle');
+            } else {
+                console.error("Unity instance is not ready or SendMessage is not available.");
+            }
+        }
+    }
 
     window.unityDataReceived = function(jsonData) {
         console.log("Información recibida", jsonData);
@@ -14,8 +32,11 @@ document.addEventListener('DOMContentLoaded', function () {
         sceneLoaded = true;
         unityReadyCallbacks.forEach(callback => callback());
         unityReadyCallbacks = [];
+        if (isIOS() && !visibleOnIOS) {
+            unityInstance.SendMessage('FullScreenToggle', 'DisableToggle');
+        }
     };
-
+ 
     // Funciones de control de pantalla completa para juegos nuevos
     window.toggleFullScreen = function() {
         let elem = document.getElementById('webgl-content');
