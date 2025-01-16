@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>Unity Web Player | OcaTrivial</title>
+    <link rel="stylesheet" href="https://storage.googleapis.com/happylearning-tv.appspot.com/games/default/css/style.css">
+    <script src="https://storage.googleapis.com/happylearning-tv.appspot.com/games/default/js/functions.js"></script>
+</head>
+<body>
+    <div id="webgl-content" class="webgl-content custom-webgl-content">
+        <div id="unityContainer">
+            <canvas id="unityCanvas" style="width: 100%; height: 100%;"></canvas>
+        </div>
+    </div>
+    <script>
+        // Declarar una variable global para almacenar la instancia de Unity
+        var unityInstance;
+
+        var loaderUrl = "Build/BuildESP.loader.js";
+        var config = {
+            dataUrl: "Build/BuildESP.data.unityweb",
+            frameworkUrl: "Build/BuildESP.framework.js.unityweb",
+            codeUrl: "Build/BuildESP.wasm.unityweb",
+            streamingAssetsUrl: "StreamingAssets",
+            companyName: "DefaultCompany",
+            productName: "OcaTrivial",
+            productVersion: "1.0",
+        };
+
+        var canvas = document.querySelector("#unityCanvas");
+        var script = document.createElement("script");
+        script.src = loaderUrl;
+        script.onload = () => {
+            createUnityInstance(canvas, config, (progress) => {}).then((instance) => {
+                unityInstance = instance;
+                console.log("Unity loaded successfully.");
+            }).catch((message) => {
+                alert(`Failed to load Unity: ${message}`);
+            });
+        };
+        document.body.appendChild(script);
+    </script>
+</body>
+</html>
